@@ -3,8 +3,12 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 
+import { logger } from "utils/logger";
+
 function App() {
   const [count, setCount] = useState(0);
+  logger.info("App mounted successfully");
+  logger.debug("Environment:", import.meta.env.MODE);
 
   return (
     <>
