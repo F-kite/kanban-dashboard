@@ -1,0 +1,44 @@
+{
+    "compilerOptions": {
+        "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+        "target": "ES2022",
+        "lib": [
+            "ES2022"
+        ],
+        "module": "CommonJS",
+        "types": [
+            "node"
+        ],
+        "skipLibCheck": true,
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "noEmit": false,
+        "composite": true,
+        "outDir": "./dist",
+        "rootDir": "./src",
+        /* Linting */
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        "baseUrl": "./src",
+        "paths": {
+            "controllers/*": [
+                "controllers/*"
+            ],
+            "routes/*": [
+                "routes/*"
+            ],
+            "services/*": [
+                "services/*"
+            ],
+            "types/*": [
+                "types/*"
+            ]
+        }
+    },
+    "include": [
+        "src"
+    ]
+}

@@ -1,0 +1,147 @@
+# Содержимое файла: src/index.ts
+# ------------------------------
+
+import express from 'express';
+import dotenv from "dotenv";
+import cors from "cors";
+import morgan from "morgan"
+import fs from "fs";
+import path from "path";
+
+import postsRouter from "./routes/posts"
+import usersRouter from "./routes/users"
+
+dotenv.config();
+
+const supabaseUrl = process.env.SUPABASE_PROJECT_URL
+const supabaseKey = process.env.SUPABASE_API_KEY
+
+
+const app = express();
+const port = 5000;
+
+app.use(express.json())
+
+const allowedOrigins = ["http://localhost"];
+
+// CORS
+const corsOptions = {
+  origin: function (origin: any, callback: any) {
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The "Access-Control-Allow-Origin" header is present on the requested resource with values of ' + allowedOrigins.join(', ');
+      return callback(new Error(msg), false);
+    }
+    callback(null, true);
+  }
+};
+app.use(cors(corsOptions))
+// ----
+
+const logStream = fs.createWriteStream(path.join(__dirname, "../logs/access.log"), { flags: "a" });
+app.use(morgan("combined", { stream: logStream })); //формат "tiny", "combined" или "dev"
+
+app.use('/api/posts', postsRouter)
+app.use('/api/users', usersRouter)
+
+app.get('/ping', (req, res) => {
+  res.send('Server is healthy');
+});
+
+app.listen(port, err => {
+  if (err) {
+    return console.error(err);
+  }
+
+  if (!supabaseUrl || !supabaseKey){
+    console.error("Конфигурация подключения клиента Supabase отсутствует")
+    console.log('Supabase URL:', supabaseUrl ? 'Loaded ✅' : 'Missing ❌');
+    console.log('Supabase Key:', supabaseKey ? 'Loaded ✅' : 'Missing ❌');
+    process.exit(1)
+  }
+  
+  return console.log(`Server is listening on ${port}`);
+});
+
+export default app
+
+
+
+# Содержимое файла: src/controllers/posts.ts
+# ------------------------------------------
+
+
+const fetchPosts = (req: any, res: { send: (arg0: string) => any; }) => res.send("GET tasks placeholder");
+const addPost = (req: any, res: { send: (arg0: string) => any; }) => res.send("ADD tasks placeholder");
+const updPostById = (req: any, res: { send: (arg0: string) => any; }) => res.send("UPDATE tasks placeholder");
+const removePost = (req: any, res: { send: (arg0: string) => any; }) => res.send("DELETE tasks placeholder");
+
+
+export {addPost, fetchPosts, removePost, updPostById}
+
+
+
+# Содержимое файла: src/routes/posts.ts
+# -------------------------------------
+
+import { Router } from "express";
+import { addPost, fetchPosts, removePost, updPostById } from "../controllers/posts";
+
+const router = Router();
+
+router.get("/", fetchPosts);
+router.post("/", addPost);
+router.put("/:id", updPostById);
+router.delete("/:id", removePost);
+
+export default router;
+
+
+
+
+# Содержимое файла: src/routes/users.ts
+# -------------------------------------
+
+import { Router } from "express";
+import {supabase} from "../services/supabaseClient"
+
+const router = Router();
+
+router.get('/', async (req, res) => {
+  const { data, error } = await supabase.from('users').select('*');
+  if (error) return res.status(400).json({ error: error.message });
+  res.json(data);
+});
+
+router.post('/', async (req, res) => {
+  const { username, email } = req.body;
+  const { data, error } = await supabase.from('users').insert([{ username, email }]);
+  if (error) return res.status(400).json({ error: error.message });
+  res.json(data);
+});
+
+export default router;
+
+
+
+
+# Содержимое файла: src/services/supabaseClient.ts
+# ------------------------------------------------
+
+
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const supabaseUrl = process.env.SUPABASE_PROJECT_URL
+const supabaseKey = process.env.SUPABASE_API_KEY
+
+if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Missing Supabase credentials in .env file');
+}
+
+export const supabase = createClient(supabaseUrl, supabaseKey)
+
+
+
+
