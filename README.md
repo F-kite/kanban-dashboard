@@ -1,73 +1,69 @@
-# React + TypeScript + Vite
+# kanban-dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Веб-приложение для управления задачами в формате Kanban-доски
 
-Currently, two official plugins are available:
+## Возможности
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Просмотр задач с фильтрацией по статусу: `todo` / `in progress` / `done`
+- Приоритеты задач: низкий, средний, высокий
+- Создание задач с заголовком, описанием, статусом и приоритетом
+- Глобальное состояние на Redux Toolkit с асинхронной загрузкой данных
+- Анимации интерфейса через GSAP
 
-## React Compiler
+## Стек технологий
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+| Часть | Технологии |
+|---|---|
+| Frontend | React 19, TypeScript, Vite, Redux Toolkit, Tailwind CSS, GSAP, Axios |
+| Backend | Node.js, Express 5, TypeScript, Supabase (PostgreSQL) |
+| Инфраструктура | Docker, Docker Compose |
 
-## Expanding the ESLint configuration
+## Быстрый старт
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Docker Compose (рекомендуется)
 
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+docker-compose up -d
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- Frontend: [http://localhost:3000](http://localhost:3000)
+- Backend: [http://localhost:5000](http://localhost:5000)
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+### Локально
 
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+**Backend**
+```bash
+cd server
+npm install
+npm run dev
 ```
+
+**Frontend**
+```bash
+cd client
+npm install
+npm run dev  
+```
+
+### Переменные окружения
+
+Создать файл `server/.env`:
+
+```env
+SUPABASE_PROJECT_URL=https://your-project.supabase.co
+SUPABASE_API_KEY=your_anon_key
+SUPABASE_SERVICE_KEY=your_service_role_key
+SUPABASE_ACCESS_TOKEN=your_access_token
+```
+
+## API
+
+| Метод | Путь | Описание |
+|---|---|---|
+| `GET` | `/api/posts` | Список всех задач |
+| `POST` | `/api/posts` | Создать задачу |
+| `PUT` | `/api/posts/:id` | Обновить задачу |
+| `DELETE` | `/api/posts/:id` | Удалить задачу |
+| `GET` | `/api/users/:id` | Получить пользователя |
+| `POST` | `/api/users` | Создать пользователя |
+| `GET` | `/api/ping` | Health check |

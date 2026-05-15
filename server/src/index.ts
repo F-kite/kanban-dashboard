@@ -8,30 +8,20 @@ import path from "path";
 import postsRouter from "routes/posts"
 import usersRouter from "routes/users"
 import systemsRouter from "routes/systems"
+import { logger } from "utils/logger"
 
 dotenv.config();
 
 const supabaseUrl = process.env.SUPABASE_PROJECT_URL
 const supabaseKey = process.env.SUPABASE_API_KEY
 
+logger.info("Server initialization started");
 
 const app = express();
 const port = 5000;
 
 app.use(express.json())
 
-const allowedOrigins = ["http://localhost"];
-
-// CORS
-const corsOptions = {
-  origin: function (origin: any, callback: any) {
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The "Access-Control-Allow-Origin" header is present on the requested resource with values of ' + allowedOrigins.join(', ');
-      return callback(new Error(msg), false);
-    }
-    callback(null, true);
-  }
-};
 app.use(cors())
 // ----
 
@@ -45,17 +35,19 @@ app.use('/api/users', usersRouter)
 
 app.listen(port, err => {
   if (err) {
-    return console.error(err);
+    logger.error("Server failed to start", { error: err });
+    return;
   }
 
   if (!supabaseUrl || !supabaseKey) {
-    console.error("Конфигурация подключения клиента Supabase отсутствует")
-    console.log('Supabase URL:', supabaseUrl ? 'Loaded ✅' : 'Missing ❌');
-    console.log('Supabase Key:', supabaseKey ? 'Loaded ✅' : 'Missing ❌');
+    logger.error("Конфигурация подключения клиента Supabase отсутствует", {
+      supabaseUrl: supabaseUrl ? 'Loaded' : 'Missing',
+      supabaseKey: supabaseKey ? 'Loaded' : 'Missing'
+    });
     process.exit(1)
   }
 
-  return console.log(`Server is listening on ${port}`);
+  logger.info(`Server is listening on port ${port}`, { port });
 });
 
 export default app

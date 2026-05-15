@@ -12,11 +12,6 @@ services:
     restart: unless-stopped
     depends_on:
       - client
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
 
   client:
     build: ./client
